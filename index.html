@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <script>
+      (function() {
+        // Intercept WebSocket creation for Vite HMR in container preview
+        var NativeWebSocket = window.WebSocket;
+        if (NativeWebSocket) {
+          function DummyWebSocket(url, protocols) {
+            var self = this;
+            this.url = url;
+            this.readyState = 3; // CLOSED
+            this.bufferedAmount = 0;
+            this.extensions = "";
+            this.protocol = "";
+            this.binaryType = "blob";
+            var listeners = {};
+
+            this.addEventListener = function(type, cb) {
+              if (!listeners[type]) listeners[type] = [];
+              listeners[type].push(cb);
+            };
+            this.removeEventListener = function(type, cb) {
+              if (!listeners[type]) return;
+              listeners[type] = listeners[type].filter(function(fn) { return fn !== cb; });
+            };
+            this.dispatchEvent = function(evt) { return true; };
+            this.send = function() {};
+            this.close = function() {};
+          }
+
+          window.WebSocket = function(url, protocols) {
+            if (typeof url === 'string' && (url.includes('vite') || url.includes('ws://') || url.includes('wss://'))) {
+              return new DummyWebSocket(url, protocols);
+            }
+            return new NativeWebSocket(url, protocols);
+          };
+          window.WebSocket.prototype = NativeWebSocket.prototype;
+          window.WebSocket.CONNECTING = 0;
+          window.WebSocket.OPEN = 1;
+          window.WebSocket.CLOSING = 2;
+          window.WebSocket.CLOSED = 3;
+        }
+
+        function isViteWsError(err) {
+          if (!err) return false;
+          var str = typeof err === 'string' ? err : String(err.message || err.reason || err.stack || err);
+          return str.includes('WebSocket') || str.includes('websocket') || str.includes('vite') || str.includes('HMR');
+        }
+
+        window.addEventListener('unhandledrejection', function(event) {
+          if (isViteWsError(event.reason)) {
+            event.preventDefault();
+            if (event.stopImmediatePropagation) event.stopImmediatePropagation();
+          }
+        }, true);
+
+        window.addEventListener('error', function(event) {
+          if (isViteWsError(event.error) || isViteWsError(event.message)) {
+            event.preventDefault();
+            if (event.stopImmediatePropagation) event.stopImmediatePropagation();
+          }
+        }, true);
+
+        var origConsoleError = console.error;
+        console.error = function() {
+          var args = Array.prototype.slice.call(arguments);
+          var msg = args.map(function(a) { return String(a && a.message ? a.message : a); }).join(' ');
+          if (isViteWsError(msg)) {
+            return;
+          }
+          origConsoleError.apply(console, arguments);
+        };
+      })();
+    </script>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ResumeMatch AI — Factual ATS Resume Tailoring Platform</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  </head>
+  <body class="bg-slate-50 text-slate-900 antialiased selection:bg-blue-100 selection:text-blue-900">
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
+

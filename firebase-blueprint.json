@@ -1,0 +1,59 @@
+{
+  "entities": {
+    "users": {
+      "title": "User",
+      "description": "User profile document",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string" },
+        "email": { "type": "string" },
+        "displayName": { "type": "string" },
+        "photoURL": { "type": "string" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["uid", "email"]
+    },
+    "resumes": {
+      "title": "Resume",
+      "description": "Candidate uploaded resumes",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "fileName": { "type": "string" },
+        "extractedText": { "type": "string" },
+        "parsedData": { "type": "object" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["userId", "fileName", "extractedText"]
+    },
+    "jobs": {
+      "title": "Job",
+      "description": "Analyzed job descriptions",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "title": { "type": "string" },
+        "description": { "type": "string" },
+        "extractedAnalysis": { "type": "object" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["userId", "description"]
+    },
+    "applications": {
+      "title": "Application",
+      "description": "Tailored resume and match report",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "resumeId": { "type": "string" },
+        "jobId": { "type": "string" },
+        "matchAnalysis": { "type": "object" },
+        "optimizedResume": { "type": "object" },
+        "validationReport": { "type": "object" },
+        "createdAt": { "type": "string" },
+        "updatedAt": { "type": "string" }
+      },
+      "required": ["userId"]
+    }
+  }
+}

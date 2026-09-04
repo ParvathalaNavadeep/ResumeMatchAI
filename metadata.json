@@ -1,0 +1,6 @@
+{
+  "name": "9th Resume",
+  "description": "ATS-friendly job match analysis and factual resume tailoring platform.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
